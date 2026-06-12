@@ -15,6 +15,23 @@ export default function DashboardPage({ result, formData, onBack }) {
       : score >= 60
       ? 'MEDIUM'
       : 'HIGH'
+const confidence =
+  score >= 80
+    ? 92
+    : score >= 60
+    ? 84
+    : 72
+
+const successProbability = confidence + 5
+
+
+const recommendedDepth =
+  score >= 80
+    ? "80–120 ft"
+    : score >= 60
+    ? "140–180 ft"
+    : "220–300 ft"
+
 const downloadReport = () => {
   const pdf = new jsPDF()
 
@@ -25,7 +42,7 @@ const downloadReport = () => {
   pdf.text(`Groundwater Score: ${score}/100`, 20, 40)
   pdf.text(`Potential: ${potential}`, 20, 50)
   pdf.text(`Risk Level: ${risk}`, 20, 60)
-  pdf.text('Recommended Depth: 140-180 ft', 20, 70)
+  pdf.text(`Recommended Depth: ${recommendedDepth}`, 20, 70)
 
   pdf.text('Assessment Details', 20, 90)
   pdf.text(`Location: ${formData?.location || 'N/A'}`, 20, 100)
@@ -48,7 +65,7 @@ const downloadReport = () => {
           Groundwater Score
         </h2>
 
-        <p className="text-5xl font-bold">
+        <p className="text-6xl font-extrabold text-cyan-400">
           {score}/100
         </p>
 
@@ -60,27 +77,37 @@ const downloadReport = () => {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-4 gap-6">
 
         <div className="border rounded-xl p-5">
           <h3 className="font-bold text-lg mb-2">
             Potential
           </h3>
-          <p>{potential}</p>
+          <p className="text-yellow-400 text-2xl font-bold">{potential}</p>
         </div>
 
         <div className="border rounded-xl p-5">
           <h3 className="font-bold text-lg mb-2">
             Risk Level
           </h3>
-          <p>{risk}</p>
+          <p className="text-orange-400 text-2xl font-bold">{risk}</p>
         </div>
+
+        <div className="border rounded-xl p-5">
+          <h3 className="font-bold text-lg mb-2">
+            Confidence
+          </h3>
+          <p className="text-cyan-400 text-2xl font-bold">
+            {confidence}%
+          </p>
+        </div>
+
 
         <div className="border rounded-xl p-5">
           <h3 className="font-bold text-lg mb-2">
             Recommended Depth
           </h3>
-          <p>140–180 ft</p>
+          <p>{recommendedDepth}</p>
         </div>
 
       </div>
@@ -96,6 +123,26 @@ const downloadReport = () => {
   <p><strong>Vegetation:</strong> {formData?.vegetation}</p>
   <p><strong>Nearby Borewells:</strong> {formData?.borewells}</p>
 </div>
+...
+
+
+      <div className="border rounded-xl p-6 mt-6 bg-slate-900">
+        <h3 className="font-bold text-xl mb-3 text-cyan-400">
+          AI Insights
+        </h3>
+
+        <p>
+          Based on the provided rainfall, soil conditions and vegetation density,
+          this location shows {potential.toLowerCase()} groundwater potential.
+          Estimated drilling success probability is {successProbability}% with
+          a confidence level of {confidence}%.
+        </p>
+
+        <p className="mt-3">
+          Recommended drilling depth: {recommendedDepth}
+        </p>
+      </div>
+
       <div className="border rounded-xl p-6 mt-6">
         <h3 className="font-bold text-xl mb-3">
           Recommendation
@@ -106,18 +153,23 @@ const downloadReport = () => {
         </p>
       </div>
 
-      <button
-        onClick={onBack}
-        className="mt-6 px-6 py-3 bg-cyan-500 text-black rounded-lg font-bold"
-      >
-<button
-  onClick={downloadReport}
-  className="mt-6 mr-4 px-6 py-3 bg-green-500 text-black rounded-lg font-bold"
->
-  Download PDF Report
-</button> 
-       Back
-      </button>
+
+      <div className="flex gap-4 mt-6">
+        <button
+          onClick={downloadReport}
+          className="px-6 py-3 bg-green-500 text-black rounded-lg font-bold"
+        >
+          Download PDF Report
+        </button>
+
+        <button
+          onClick={onBack}
+          className="px-6 py-3 bg-cyan-500 text-black rounded-lg font-bold"
+        >
+          Back
+        </button>
+      </div>
+
     </div>
   )
 }

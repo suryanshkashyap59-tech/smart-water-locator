@@ -43,7 +43,7 @@ export default function AssessmentPage({ onComplete, onBack }) {
       <div className="space-y-4">
 
         <input
-          className="border p-3 w-full"
+          className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           placeholder="Location"
           value={formData.location}
           onChange={(e) =>
@@ -55,7 +55,7 @@ export default function AssessmentPage({ onComplete, onBack }) {
         />
 
         <select
-          className="border p-3 w-full"
+          className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           value={formData.soilType}
           onChange={(e) =>
             setFormData({
@@ -71,7 +71,7 @@ export default function AssessmentPage({ onComplete, onBack }) {
         </select>
 
         <input
-          className="border p-3 w-full"
+          className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           placeholder="Annual Rainfall (mm)"
           type="number"
           value={formData.rainfall}
@@ -84,7 +84,7 @@ export default function AssessmentPage({ onComplete, onBack }) {
         />
 
         <input
-          className="border p-3 w-full"
+          className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           placeholder="Distance from River (km)"
           type="number"
           value={formData.riverDistance}
@@ -97,7 +97,7 @@ export default function AssessmentPage({ onComplete, onBack }) {
         />
 
         <select
-          className="border p-3 w-full"
+          className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           value={formData.vegetation}
           onChange={(e) =>
             setFormData({
@@ -112,7 +112,7 @@ export default function AssessmentPage({ onComplete, onBack }) {
         </select>
 
         <select
-          className="border p-3 w-full"
+          className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           value={formData.borewells}
           onChange={(e) =>
             setFormData({
