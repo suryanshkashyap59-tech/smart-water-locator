@@ -1,4 +1,6 @@
 import jsPDF from 'jspdf'
+import LocationMap from "../maps/LocationMap"
+
 export default function DashboardPage({ result, formData, onBack }) {
   const score = result?.score || 0
 
@@ -25,12 +27,18 @@ const confidence =
 const successProbability = confidence + 5
 
 
-const recommendedDepth =
-  score >= 80
-    ? "80–120 ft"
-    : score >= 60
-    ? "140–180 ft"
-    : "220–300 ft"
+let recommendedDepth
+
+
+if (result?.rainfall > 1500) {
+  recommendedDepth = "80–120 ft"
+} else if (result?.rainfall > 1000) {
+  recommendedDepth = "120–180 ft"
+} else if (result?.rainfall > 500) {
+  recommendedDepth = "180–250 ft"
+} else {
+  recommendedDepth = "250–400 ft"
+}
 
 const downloadReport = () => {
   const pdf = new jsPDF()
@@ -47,7 +55,7 @@ const downloadReport = () => {
   pdf.text('Assessment Details', 20, 90)
   pdf.text(`Location: ${formData?.location || 'N/A'}`, 20, 100)
   pdf.text(`Soil Type: ${formData?.soilType || 'N/A'}`, 20, 110)
-  pdf.text(`Rainfall: ${formData?.rainfall || 'N/A'} mm`, 20, 120)
+  pdf.text(`Rainfall: ${result?.rainfall || 'N/A'} mm`, 20, 120)
   pdf.text(`River Distance: ${formData?.riverDistance || 'N/A'} km`, 20, 130)
   pdf.text(`Vegetation: ${formData?.vegetation || 'N/A'}`, 20, 140)
   pdf.text(`Nearby Borewells: ${formData?.borewells || 'N/A'}`, 20, 150)
@@ -117,11 +125,28 @@ const downloadReport = () => {
   </h3>
 
   <p><strong>Location:</strong> {formData?.location}</p>
+  <p><strong>Full Location:</strong> {result?.coordinates?.displayName}</p>
+  <p><strong>Location Parts:</strong> {result?.coordinates?.displayName?.split(",").join(" | ")}</p>
+
+
+  <p><strong>Latitude:</strong> {result?.coordinates?.lat?.toFixed(4)}</p>
+  <p><strong>Longitude:</strong> {result?.coordinates?.lon?.toFixed(4)}</p>
+
   <p><strong>Soil Type:</strong> {formData?.soilType}</p>
-  <p><strong>Rainfall:</strong> {formData?.rainfall} mm</p>
+  <p><strong>Rainfall:</strong> {result?.rainfall} mm (Auto Detected)</p>
   <p><strong>River Distance:</strong> {formData?.riverDistance} km</p>
   <p><strong>Vegetation:</strong> {formData?.vegetation}</p>
   <p><strong>Nearby Borewells:</strong> {formData?.borewells}</p>
+
+<div className="mt-6">
+  <h3 className="font-bold text-xl mb-4">Location Map</h3>
+  <LocationMap
+    lat={result?.coordinates?.lat?.toFixed(4)}
+    lon={result?.coordinates?.lon?.toFixed(4)}
+    location={result?.coordinates?.displayName}
+  />
+</div>
+
 </div>
 ...
 

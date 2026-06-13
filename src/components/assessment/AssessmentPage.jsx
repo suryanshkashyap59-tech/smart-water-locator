@@ -1,38 +1,124 @@
 import { useState } from 'react'
+import { getCoordinates } from "../../services/geocoding"
+import { getRainfall } from "../../services/weatherApi"
 export default function AssessmentPage({ onComplete, onBack }) {
   const [formData, setFormData] = useState({
     location: '',
     soilType: 'Loamy',
-    rainfall: '',
     riverDistance: '',
     vegetation: 'Medium',
     borewells: 'No'
   })
 
-  const handleSubmit = () => {
-    let score = 50
+  const [loading, setLoading] = useState(false)
 
-    if (Number(formData.rainfall) > 1000) score += 15
-    if (formData.soilType === 'Loamy') score += 10
-    if (formData.vegetation === 'High') score += 10
-    if (Number(formData.riverDistance) < 2) score += 15
-    if (formData.borewells === 'Yes') score += 10
 
-    if (score > 100) score = 100
 
-    onComplete(
-      {
-        score,
-        recommendation:
-          score >= 80
-            ? 'High Groundwater Potential'
-            : score >= 60
-            ? 'Moderate Groundwater Potential'
-            : 'Low Groundwater Potential'
-      },
-      formData
-    )
+
+const handleSubmit = async () => {
+const riverDistance = Number(formData.riverDistance)
+  setLoading(true)
+
+
+let rainfallScore = 0
+
+  const coordinates = await getCoordinates(formData.location)
+  console.log(coordinates)
+console.log("COORDINATES RESULT:", coordinates)
+
+
+  if (!coordinates) {
+    alert("Location not found. Please enter a valid place.")
+    return
   }
+
+
+console.log("AFTER RAINFALL API")
+
+  const rainfallFromApi = await getRainfall(
+    coordinates.lat,
+    coordinates.lon
+  )
+
+  console.log("Rainfall:", rainfallFromApi)
+
+  const rainfall = rainfallFromApi || 0
+
+
+
+let soilScore = 0
+let vegetationScore = 0
+let riverScore = 0
+let borewellScore = 0
+
+// Rainfall (25 points)
+if (rainfall > 1500) rainfallScore = 25
+else if (rainfall > 1000) rainfallScore = 20
+else if (rainfall > 500) rainfallScore = 10
+else rainfallScore = 5
+
+// Soil (20 points)
+if (formData.soilType === 'Loamy') soilScore = 20
+else if (formData.soilType === 'Clay') soilScore = 15
+else if (formData.soilType === 'Sandy') soilScore = 8
+else soilScore = 3
+
+// Vegetation (20 points)
+if (formData.vegetation === 'High') vegetationScore = 20
+else if (formData.vegetation === 'Medium') vegetationScore = 10
+else vegetationScore = 5
+
+// River Distance (20 points)
+if (riverDistance < 1) riverScore = 20
+else if (riverDistance < 5) riverScore = 10
+else riverScore = 3
+
+// Existing Borewells (15 points)
+if (formData.borewells === 'Yes') borewellScore = 15
+else borewellScore = 5
+
+const score =
+rainfallScore +
+soilScore +
+vegetationScore +
+riverScore +
+borewellScore
+
+const successProbability = Math.min(
+95,
+Math.round(score * 0.9)
+
+
+)
+
+let recommendation = ''
+
+if (score >= 80) {
+recommendation =
+'Excellent groundwater potential. Borewell drilling is strongly recommended.'
+} else if (score >= 60) {
+recommendation =
+'Moderate groundwater potential. Site survey is recommended before drilling.'
+} else {
+recommendation =
+'Low groundwater potential. Consider alternate water sources or a hydrogeological survey.'
+}
+
+
+  setLoading(false)
+
+onComplete(
+{
+score,
+successProbability,
+recommendation,
+coordinates,
+rainfall: rainfallFromApi,
+
+},
+formData
+)
+}
 
   return (
     <div className="p-8 max-w-3xl mx-auto">
@@ -70,18 +156,6 @@ export default function AssessmentPage({ onComplete, onBack }) {
           <option>Rocky</option>
         </select>
 
-        <input
-          className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-          placeholder="Annual Rainfall (mm)"
-          type="number"
-          value={formData.rainfall}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              rainfall: e.target.value
-            })
-          }
-        />
 
         <input
           className="w-full p-4 rounded-xl bg-white text-black placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -135,9 +209,12 @@ export default function AssessmentPage({ onComplete, onBack }) {
 
           <button
             onClick={handleSubmit}
-            className="px-6 py-3 bg-cyan-500 text-black rounded font-bold"
+            disabled={loading}
           >
-            Analyze Groundwater
+            {loading ? "Analyzing..." : "Analyze Groundwater"}
+
+
+
           </button>
         </div>
 
