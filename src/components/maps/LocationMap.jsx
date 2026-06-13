@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 export default function LocationMap({ lat, lon, location }) {
@@ -15,25 +15,19 @@ export default function LocationMap({ lat, lon, location }) {
       }}
     >
       <TileLayer
-  attribution="Esri"
-  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-/>
+        attribution="Esri"
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      />
 
       <Marker position={[lat, lon]}>
-  <Popup>
-    <strong>{location}</strong>
-    <br />
-    Lat: {lat}
-    <br />
-    Lon: {lon}
-  </Popup>
-</Marker>
-
-<Circle
-  center={[lat, lon]}
-  radius={1000}
-/>
-
-</MapContainer>
-)
+        <Popup>
+          <strong>{location}</strong>
+          <br />
+          Lat: {lat}
+          <br />
+          Lon: {lon}
+        </Popup>
+      </Marker>
+    </MapContainer>
+  )
 }
