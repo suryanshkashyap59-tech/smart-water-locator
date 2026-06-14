@@ -1,5 +1,7 @@
-export async function getNearbyWaterBodies(lat, lon) {
+export default async function handler(req, res) {
   try {
+    const { lat, lon } = req.query
+
     const query = `
       [out:json];
       (
@@ -13,21 +15,16 @@ export async function getNearbyWaterBodies(lat, lon) {
       "https://lz4.overpass-api.de/api/interpreter",
       {
         method: "POST",
-        body: query,
+        body: query
       }
     )
 
-    if (!response.ok) {
-      console.warn("Overpass API rate limit reached")
-      return []
-    }
-
     const data = await response.json()
-    console.log("Water Bodies Found:", data.elements?.length)
 
-    return data.elements || []
+    res.status(200).json(data)
   } catch (error) {
-    console.error(error)
-    return []
+    res.status(500).json({
+      error: error.message
+    })
   }
 }
