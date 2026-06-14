@@ -21,6 +21,16 @@ export default function LocationMap({ lat, lon, location }) {
       />
 
       <Marker position={[lat, lon]}>
+<Marker
+  position={[
+    Number(lat) + 0.001,
+    Number(lon) + 0.001
+  ]}
+>
+  <Popup>
+    ⭐ Recommended Borewell Location
+  </Popup>
+</Marker>
         <Popup>
           <strong>{location}</strong>
           <br />
