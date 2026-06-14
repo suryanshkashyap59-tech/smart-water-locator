@@ -3,8 +3,8 @@ export async function getNearbyWaterBodies(lat, lon) {
     const query = `
       [out:json];
       (
-        way["waterway"](around:50000,${lat},${lon});
-        way["natural"="water"](around:50000,${lat},${lon});
+        way["waterway"](around:5000,${lat},${lon});
+        way["natural"="water"](around:5000,${lat},${lon});
       );
       out center tags;
     `
@@ -12,7 +12,7 @@ export async function getNearbyWaterBodies(lat, lon) {
 
 
 const response = await fetch(
-  "https://overpass.kumi.systems/api/interpreter",
+  "https://lz4.overpass-api.de/api/interpreter",
   {
     method: "POST",
     body: query,
