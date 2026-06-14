@@ -15,15 +15,21 @@ export default async function handler(req, res) {
       "https://lz4.overpass-api.de/api/interpreter",
       {
         method: "POST",
-        body: query
+        body: query,
+        headers: {
+          "Content-Type": "text/plain"
+        }
       }
     )
 
-    const data = await response.json()
+    const text = await response.text()
 
-    res.status(200).json(data)
+    return res.status(200).json({
+      status: response.status,
+      preview: text.substring(0, 500)
+    })
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       error: error.message
     })
   }
