@@ -12,15 +12,15 @@ export default async function handler(req, res) {
     `
 
     const response = await fetch(
-      "https://lz4.overpass-api.de/api/interpreter",
-      {
-        method: "POST",
-        body: query,
-        headers: {
-          "Content-Type": "text/plain"
-        }
-      }
-    )
+  "https://overpass-api.de/api/interpreter",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `data=${encodeURIComponent(query)}`
+  }
+)
 
     const text = await response.text()
 
