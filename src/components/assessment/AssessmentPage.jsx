@@ -103,8 +103,6 @@ else borewellScore = 2
 
 
 // Existing Borewells (15 points)
-if (formData.borewells === 'Yes') borewellScore = 15
-else borewellScore = 5
 
 
 const score =
